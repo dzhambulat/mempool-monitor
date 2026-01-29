@@ -23,14 +23,15 @@ func NewGethProvider(rpcURL string) *GethProvider {
 }
 
 func (p *GethProvider) Subscribe() error {
-    p.observer = make(chan *types.Transaction, 100)
+    p.observer = make(chan *types.Transaction, 10)
     nodeUri := os.Getenv("NODE_URI")
-    client, err := ethclient.Dial("wss://" + nodeUri)
+
+    client, err := ethclient.Dial(nodeUri)
     if err != nil {
         return err
     }
     p.client = client
-
+	
     headers := make(chan *core_types.Header)
     sub, err := p.client.SubscribeNewHead(context.Background(), headers)
     if err != nil {
